@@ -1,3 +1,4 @@
+import json
 import os
 import re
 
@@ -59,6 +60,7 @@ def transform_data(data):
         "batteryvoltage": get_voltage(cap["tagbatteryvoltage"]),
         "date": res[0][2]
     }
+    print(f"sending data : \n{json.dumps(data, indent=4)}")
 
     t.set(data["temp"])
     r.set(data["rssi"])
@@ -67,13 +69,14 @@ def transform_data(data):
 
 
 if __name__ == '__main__':
-    t = Gauge("temperature", "Temperature (C)")
-    r = Gauge("rssi", "RSSI (dBm)")
-    h = Gauge("humidity", "Humidity (%)")
-    v = Gauge("voltage", "Bettery Voltage (V)")
-    start_http_server(int(os.getenv("METRICS_PORT")))
-    res = requests.get("http://app.objco.com:8099/?account=16L1SPQZS3&limit=1").json()
-    truc = [transform_data(i) for i in res]
-    time.sleep(60 * 5)
+    while True:
+        t = Gauge("temperature", "Temperature (C)")
+        r = Gauge("rssi", "RSSI (dBm)")
+        h = Gauge("humidity", "Humidity (%)")
+        v = Gauge("voltage", "Bettery Voltage (V)")
+        start_http_server(int(os.getenv("METRICS_PORT")))
+        res = requests.get("http://app.objco.com:8099/?account=16L1SPQZS3&limit=1").json()
+        truc = [transform_data(i) for i in res]
+        time.sleep(60 * 5)
 
 
