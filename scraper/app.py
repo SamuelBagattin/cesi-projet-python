@@ -71,8 +71,8 @@ if __name__ == '__main__':
     r = Gauge("rssi", "RSSI (dBm)")
     h = Gauge("humidity", "Humidity (%)")
     v = Gauge("voltage", "Bettery Voltage (V)")
+    start_http_server(int(os.getenv("METRICS_PORT")))
     while True:
-        start_http_server(int(os.getenv("METRICS_PORT")))
-        res = requests.get("http://app.objco.com:8099/?account=16L1SPQZS3&limit=1").json()
-        truc = [transform_data(i) for i in res]
-        time.sleep(60 * 5)
+            res = requests.get("http://app.objco.com:8099/?account=16L1SPQZS3&limit=1").json()
+            truc = [transform_data(i) for i in res]
+            time.sleep(60 * 5)
