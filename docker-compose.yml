@@ -16,6 +16,8 @@ services:
   prometheus:
     container_name: prometheus
     restart: always
+    ports:
+    - "9090:9090"
     volumes:
       - prometheus-data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml 
@@ -23,12 +25,23 @@ services:
     networks:
       - main
 
-  app:
-    container_name: app
+  scraper:
+    container_name: scraper
     restart: on-failure
     environment:
       METRICS_PORT: "8000"
-    build: ./app
+    build: ./scraper
+    networks:
+      - main
+
+  app:
+    container_name: app
+    restart: on-failure
+    ports:
+    - "5000:5000"
+    environment:
+      PROMETHEUS_SERVER_URL: "http://prometheus:9090"
+    build: ./web
     networks:
       - main
 
